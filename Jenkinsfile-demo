@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('PULL CODE FROM GITHUB') {
+            steps {
+                echo 'Pulling'
+            }
+        }
+        stage('BUILD') {
+            steps {
+                echo 'Building application'
+            }
+        }
+        stage('SONAR') {
+            steps {
+                echo 'PERFORMING SONAR ANALYSIS'
+            }
+        }
+    }
+}

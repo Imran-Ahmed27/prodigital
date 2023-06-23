@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    environment {
+
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+     registry = "yellaiahdocker/kona"
+        registryCredential = 'dockerhub'
+        dockerImage = ''
+    }
+
+    stages {
+
+        stage('Building the docker image') {
+            steps {
+                sh 'cd webapp && docker build -t yellaiahdocker/kona .'
+            }
+        }
+        stage('Logging into dockerhub account') {
+            steps {
+                sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+            }
+        }
+        stage('pushing the docker image into dockerhub') {
+            steps {
+                  sh 'docker push yellaiahdocker/kona'
+            }
+        }
+        stage('Remove old docker images') {
+             steps {
+                 sh 'docker rmi -f yellaiahdocker/kona'
+
+            }
+        }
+         stage('Running on kubernetes') {
+            steps {
+                echo 'Deploying....'
+                sh "cd webapp && kubectl apply -f deployment.yml"
+                sh "cd webapp && kubectl apply -f service.yml"
+                sh "kubectl rollout restart deployment konalms"
+            }
+        }
+    }
+}

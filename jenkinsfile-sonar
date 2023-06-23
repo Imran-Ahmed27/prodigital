@@ -1,0 +1,14 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Sonar Analysis') {
+            steps {
+                echo 'Testing..'
+                sh 'cd webapp && sudo docker run  --rm -e SONAR_HOST_URL="http://13.57.203.92:9000" -e SONAR_LOGIN="sqp_4e475284c3c72d614ce629c710952218fa88aea1"  -v ".:/usr/src" sonarsource/sonar-scanner-cli -Dsonar.projectKey=lms'
+            }
+        }
+
+
+    }
+}
